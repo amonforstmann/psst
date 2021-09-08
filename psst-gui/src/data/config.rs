@@ -189,6 +189,7 @@ impl Default for AudioQuality {
 pub enum Theme {
     Light,
     Dark,
+    Darker,
 }
 
 impl Default for Theme {
