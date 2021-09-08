@@ -127,7 +127,10 @@ fn general_tab_widget() -> impl Widget<AppState> {
         .with_child(Label::new("Theme").with_font(theme::UI_FONT_MEDIUM))
         .with_spacer(theme::grid(2.0))
         .with_child(
-            RadioGroup::new(vec![("Light", Theme::Light), ("Dark", Theme::Dark)])
+            RadioGroup::new(vec![
+                ("Light", Theme::Light),
+                ("Dark", Theme::Dark),
+                ("Darker", Theme::Darker)])
                 .lens(AppState::config.then(Config::theme)),
         );
 

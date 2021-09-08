@@ -44,6 +44,7 @@ pub fn setup(env: &mut Env, state: &AppState) {
     match state.config.theme {
         Theme::Light => setup_light_theme(env),
         Theme::Dark => setup_dark_theme(env),
+        Theme::Darker => setup_darker_theme(env),
     };
 
     env.set(WINDOW_BACKGROUND_COLOR, env.get(GREY_700));
@@ -64,6 +65,10 @@ pub fn setup(env: &mut Env, state: &AppState) {
             env.set(BUTTON_DARK, env.get(GREY_600));
         }
         Theme::Dark => {
+            env.set(BUTTON_LIGHT, env.get(GREY_600));
+            env.set(BUTTON_DARK, env.get(GREY_700));
+        }
+        Theme::Darker => {
             env.set(BUTTON_LIGHT, env.get(GREY_600));
             env.set(BUTTON_DARK, env.get(GREY_700));
         }
@@ -154,6 +159,25 @@ fn setup_dark_theme(env: &mut Env) {
     env.set(GREY_500, Color::grey8(0x4f));
     env.set(GREY_600, Color::grey8(0x33));
     env.set(GREY_700, Color::grey8(0x28));
+    env.set(BLUE_100, Color::rgb8(0x00, 0x8d, 0xdd));
+    env.set(BLUE_200, Color::rgb8(0x5c, 0xc4, 0xff));
+
+    env.set(RED, Color::rgba8(0xEB, 0x57, 0x57, 0xFF));
+
+    env.set(LINK_HOT_COLOR, Color::rgba(1.0, 1.0, 1.0, 0.05));
+    env.set(LINK_ACTIVE_COLOR, Color::rgba(1.0, 1.0, 1.0, 0.025));
+    env.set(LINK_COLD_COLOR, Color::rgba(1.0, 1.0, 1.0, 0.0));
+}
+
+fn setup_darker_theme(env: &mut Env) {
+    env.set(GREY_000, Color::grey8(0xff));
+    env.set(GREY_100, Color::grey8(0xf2));
+    env.set(GREY_200, Color::grey8(0xe0));
+    env.set(GREY_300, Color::grey8(0xbd));
+    env.set(GREY_400, Color::grey8(0x82));
+    env.set(GREY_500, Color::grey8(0x4f));
+    env.set(GREY_600, Color::grey8(0x27));
+    env.set(GREY_700, Color::grey8(0x10));
     env.set(BLUE_100, Color::rgb8(0x00, 0x8d, 0xdd));
     env.set(BLUE_200, Color::rgb8(0x5c, 0xc4, 0xff));
 
