@@ -78,7 +78,7 @@ impl AppState {
         let playback = Playback {
             state: PlaybackState::Stopped,
             now_playing: None,
-            queue_behavior: QueueBehavior::Sequential,
+            queue_behavior: config.queue_behavior,
             queue: Vector::new(),
             volume: config.volume,
         };
@@ -163,7 +163,7 @@ impl AppState {
             item,
             origin,
             progress: Duration::default(),
-            analysis: Promise::default(),
+            library: Arc::clone(&self.library),
         });
     }
 
@@ -174,7 +174,7 @@ impl AppState {
             item,
             origin,
             progress,
-            analysis: Promise::default(),
+            library: Arc::clone(&self.library),
         });
     }
 
@@ -201,19 +201,29 @@ impl AppState {
         self.playback.now_playing.take();
         self.common_ctx_mut().playback_item.take();
     }
+
+    pub fn set_queue_behavior(&mut self, queue_behavior: QueueBehavior) {
+        self.playback.queue_behavior = queue_behavior;
+        self.config.queue_behavior = queue_behavior;
+        self.config.save();
+    }
 }
 
 impl AppState {
-    pub fn update_common_ctx(&mut self) {
-        self.common_ctx_mut().library = Arc::clone(&self.library);
-    }
-
     pub fn common_ctx_mut(&mut self) -> &mut CommonCtx {
         Arc::make_mut(&mut self.common_ctx)
     }
 
-    pub fn library_mut(&mut self) -> &mut Library {
-        Arc::make_mut(&mut self.library)
+    pub fn with_library_mut(&mut self, func: impl FnOnce(&mut Library)) {
+        func(Arc::make_mut(&mut self.library));
+        self.library_updated();
+    }
+
+    fn library_updated(&mut self) {
+        if let Some(now_playing) = &mut self.playback.now_playing {
+            now_playing.library = Arc::clone(&self.library);
+        }
+        self.common_ctx_mut().library = Arc::clone(&self.library);
     }
 }
 
@@ -308,14 +318,6 @@ impl CommonCtx {
             .as_ref()
             .map(|t| t.id.same(&track.id))
             .unwrap_or(false)
-    }
-
-    pub fn is_track_saved(&self, track: &Track) -> bool {
-        self.library.contains_track(track)
-    }
-
-    pub fn is_album_saved(&self, album: &Album) -> bool {
-        self.library.contains_album(album)
     }
 }
 
